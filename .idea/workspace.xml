@@ -68,8 +68,8 @@
       <file leaf-file-name="run_dp.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/run_dp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.17322835" vertical-offset="1134" max-vertical-offset="1515">
-              <caret line="80" column="9" selection-start-line="80" selection-start-column="9" selection-end-line="80" selection-end-column="9" />
+            <state vertical-scroll-proportion="-0.03937008" vertical-offset="1020" max-vertical-offset="1620">
+              <caret line="67" column="38" selection-start-line="67" selection-start-column="38" selection-end-line="67" selection-end-column="38" />
               <folding>
                 <element signature="e#43#53#0" expanded="true" />
               </folding>
@@ -423,8 +423,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/run_dp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.17322835" vertical-offset="1134" max-vertical-offset="1515">
-          <caret line="80" column="9" selection-start-line="80" selection-start-column="9" selection-end-line="80" selection-end-column="9" />
+        <state vertical-scroll-proportion="-0.03937008" vertical-offset="1020" max-vertical-offset="1620">
+          <caret line="67" column="38" selection-start-line="67" selection-start-column="38" selection-end-line="67" selection-end-column="38" />
           <folding>
             <element signature="e#43#53#0" expanded="true" />
           </folding>

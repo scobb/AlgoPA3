@@ -42,6 +42,11 @@ class Preprocessor(object):
 
     @staticmethod
     def matrix_print(matrix):
+        """
+        pretty printing for 2d-array
+        :param matrix: matrix to print
+        :return: None
+        """
         s = [[str(e) for e in row] for row in matrix]
         lens = [max(map(len, col)) for col in zip(*s)]
         fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
@@ -49,16 +54,18 @@ class Preprocessor(object):
         print ('\n'.join(table))
 
     def find_sentences(self):
+        """
+        dynamic programming!! populate dat array. populates self.sentences when finished.
+        :return: None
+        """
+        # declare array full of Nones, NxN where N = len(phrase)
         arr = [[None for _ in range(len(self.phrase))] for _ in range(len(self.phrase))]
 
         # don't actually need to check every column; just the first and those we find entries pointing to
         start_to_check = [0]
         for start in start_to_check:
-            for end in range(len(arr)):
+            for end in range(start, len(arr)):
                 length = end+1 - start
-                if length <= 0:
-                    # can't check words that end before they start
-                    continue
                 # slice does [start, end), so we'll add 1 to end
                 word = self.phrase[start:end+1]
                 if length in self.words_by_length:
@@ -90,7 +97,7 @@ if __name__ == '__main__':
     filename = ''
     try:
         filename = sys.argv[1]
-    except IndexError:
+    except:
         print("Usage: %s <filename>" % sys.argv[0])
         exit(1)
     main(filename)
