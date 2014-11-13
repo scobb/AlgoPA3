@@ -40,6 +40,14 @@ class Preprocessor(object):
         for phrase in self.sentences:
             print(phrase)
 
+    @staticmethod
+    def matrix_print(matrix):
+        s = [[str(e) for e in row] for row in matrix]
+        lens = [max(map(len, col)) for col in zip(*s)]
+        fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
+        table = [fmt.format(*row) for row in s]
+        print ('\n'.join(table))
+
     def find_sentences(self):
         arr = [[None for _ in range(len(self.phrase))] for _ in range(len(self.phrase))]
 
@@ -62,12 +70,15 @@ class Preprocessor(object):
                             for inner_start in range(len(arr)):
                                 # find those who pointed us here
                                 if arr[inner_start][start-1]:
+                                    # append their sentence fragments to our own
                                     for their_frag in arr[inner_start][start-1]:
                                         fragments.append(their_frag + ' ' + word)
                         else:
                             fragments = [word]
                         arr[start][end] = fragments
                         start_to_check.append(end+1)
+
+        #Preprocessor.matrix_print(arr)
 
         for row in arr:
             if row[-1]:

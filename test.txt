@@ -1,8 +1,10 @@
-6
+8
 a
 alan
 lan
 lant
 uring
 turing
+tur
+ing
 alanturing
