@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 __author__ = 'scobb'
 import sys
 from copy import copy
@@ -41,7 +42,7 @@ class Preprocessor(object):
 
     def find_sentences(self):
         """
-        method - finds all possible phrases using build_phrase method
+        method - finds all possible sentences using build_phrase method
 
         """
         ind = len(self.phrase) - 1
@@ -50,8 +51,8 @@ class Preprocessor(object):
 
     def build_sentence(self, sentence, ind, end_ind):
         """
-        method - recursively builds phrases with words in self.words_by_length from
-        self.phrase. Appends result to self.phrases
+        method - recursively builds sentences with words in self.words_by_length from
+        self.phrase. Appends result to self.sentences
         :param sentence: sentence to this point
         :param ind: beginning index to look at self.phrase
         :param end_ind: end index to look at self.phrase
@@ -74,9 +75,7 @@ class Preprocessor(object):
         # can we make a word?
         if len(active_phrase) in self.words_by_length:
             if active_phrase in self.words_by_length[len(active_phrase)]:
-                new_phrase = active_phrase + ' ' + sentence
-                if new_phrase.endswith(' '):
-                    new_phrase = new_phrase[0:-1]
+                new_phrase = (active_phrase + ' ' + sentence).strip()
                 # "take" recursive call
                 self.build_sentence(new_phrase, ind - 1, ind)
         # "leave" recursive call
