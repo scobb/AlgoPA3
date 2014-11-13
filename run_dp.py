@@ -43,6 +43,7 @@ class Preprocessor(object):
     def find_sentences(self):
         arr = [[None for _ in range(len(self.phrase))] for _ in range(len(self.phrase))]
 
+        # don't actually need to check every column; just the first and those we find entries pointing to
         start_to_check = [0]
         for start in start_to_check:
             for end in range(len(arr)):
@@ -55,31 +56,23 @@ class Preprocessor(object):
                 if length in self.words_by_length:
                     if word in self.words_by_length[length]:
                         # found the word -- find its predecessors
-                        predecessors = []
-                        if end >= 0:
+                        fragments = []
+                        if start > 0:
+                            # if we aren't the first entry
                             for inner_start in range(len(arr)):
                                 # find those who pointed us here
                                 if arr[inner_start][start-1]:
-                                    predecessors.append(arr[inner_start][start-1])
-                        arr[start][end] = {'word': word,
-                                           'predecessors': predecessors}
+                                    for their_frag in arr[inner_start][start-1]:
+                                        fragments.append(their_frag + ' ' + word)
+                        else:
+                            fragments = [word]
+                        arr[start][end] = fragments
                         start_to_check.append(end+1)
 
         for row in arr:
             if row[-1]:
-                self.build_sentences('', row[-1])
-
-    def build_sentences(self, sentence, obj):
-        sentence = copy(sentence)
-        sentence = obj['word'] + " " + sentence
-        if not obj['predecessors']:
-            self.sentences.append(sentence.strip())
-        else:
-            for predecessor in obj['predecessors']:
-                self.build_sentences(sentence, predecessor)
-
-
-
+                for sentence in row[-1]:
+                    self.sentences.append(sentence)
 
 
 if __name__ == '__main__':
