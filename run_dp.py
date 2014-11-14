@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 __author__ = 'scobb'
 import sys
+from copy import copy
 
 
 def main(filename):
@@ -31,6 +32,7 @@ class Preprocessor(object):
                 self.words_by_length[len(word)] = [word]
         self.phrase = f.readline().strip()
 
+
     def output(self):
         """
         method - prints output to stdout
@@ -58,7 +60,7 @@ class Preprocessor(object):
                 word = self.phrase[start:end + 1]
                 if length in self.words_by_length:
                     if word in self.words_by_length[length]:
-                        # found the word -- find its predecessors
+                        # found the word -- append to its predecessors
                         if start > 0:
                             # if we aren't the first entry
                             for fragment in fragments[start - 1]:
@@ -66,6 +68,7 @@ class Preprocessor(object):
                         else:
                             fragments[end] = [word]
                         if end + 1 not in start_to_check:
+                            # need to make sure we check the words starting right after we end
                             start_to_check.append(end + 1)
 
         for sentence in fragments[-1]:
