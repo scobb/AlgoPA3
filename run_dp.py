@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 __author__ = 'scobb'
 import sys
-from copy import copy
 
 
 def main(filename):
@@ -27,11 +26,11 @@ class Preprocessor(object):
         for _ in range(num_words):
             word = f.readline().strip()
             if len(word) in self.words_by_length:
-                self.words_by_length[len(word)].append(word)
+                if word not in self.words_by_length[len(word)]:
+                    self.words_by_length[len(word)].append(word)
             else:
                 self.words_by_length[len(word)] = [word]
         self.phrase = f.readline().strip()
-
 
     def output(self):
         """
@@ -50,8 +49,9 @@ class Preprocessor(object):
         # declare array full of Nones, NxN where N = len(phrase)
         total_length = len(self.phrase)
         fragments = [[] for _ in range(total_length)]
+        runs = 0
 
-        # don't actually need to check every column; just the first and those we find entries pointing to
+        # don't need to check every column; just the first and those we find entries pointing to
         start_to_check = [0]
         for start in start_to_check:
             for end in range(start, total_length):
@@ -64,13 +64,15 @@ class Preprocessor(object):
                         if start > 0:
                             # if we aren't the first entry
                             for fragment in fragments[start - 1]:
+                                runs += 1
                                 fragments[end].append(fragment + ' ' + word)
                         else:
                             fragments[end] = [word]
                         if end + 1 not in start_to_check:
                             # need to make sure we check the words starting right after we end
                             start_to_check.append(end + 1)
-
+                            start_to_check.sort()
+        # print(runs)
         for sentence in fragments[-1]:
             self.sentences.append(sentence)
 
