@@ -22,14 +22,9 @@ class Preprocessor(object):
         f = open(filename, 'r')
         num_words = int(f.readline())
         self.sentences = []
-        self.words_by_length = {}
+        self.words = {}
         for _ in range(num_words):
-            word = f.readline().strip()
-            if len(word) in self.words_by_length:
-                if word not in self.words_by_length[len(word)]:
-                    self.words_by_length[len(word)].append(word)
-            else:
-                self.words_by_length[len(word)] = [word]
+            self.words[f.readline().strip()] = True
         self.phrase = f.readline().strip()
 
     def output(self):
@@ -58,20 +53,19 @@ class Preprocessor(object):
                 length = end + 1 - start
                 # slice does [start, end), so we'll add 1 to end
                 word = self.phrase[start:end + 1]
-                if length in self.words_by_length:
-                    if word in self.words_by_length[length]:
-                        # found the word -- append to its predecessors
-                        if start > 0:
-                            # if we aren't the first entry
-                            for fragment in fragments[start - 1]:
-                                runs += 1
-                                fragments[end].append(fragment + ' ' + word)
-                        else:
-                            fragments[end] = [word]
-                        if end + 1 not in start_to_check:
-                            # need to make sure we check the words starting right after we end
-                            start_to_check.append(end + 1)
-                            start_to_check.sort()
+                if word in self.words:
+                    # found the word -- append to its predecessors
+                    if start > 0:
+                        # if we aren't the first entry
+                        for fragment in fragments[start - 1]:
+                            runs += 1
+                            fragments[end].append(fragment + ' ' + word)
+                    else:
+                        fragments[end] = [word]
+                    if end + 1 not in start_to_check:
+                        # need to make sure we check the words starting right after we end
+                        start_to_check.append(end + 1)
+                        start_to_check.sort()
         # print(runs)
         for sentence in fragments[-1]:
             self.sentences.append(sentence)
