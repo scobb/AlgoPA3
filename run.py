@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 __author__ = 'scobb'
 import sys
-from copy import copy
 
 
 def main(filename):
@@ -13,6 +12,7 @@ def main(filename):
     my_pp.find_sentences()
     my_pp.output()
 
+
 class Preprocessor(object):
     """
     class - takes care of the parsing
@@ -22,13 +22,9 @@ class Preprocessor(object):
         f = open(filename, 'r')
         num_words = int(f.readline())
         self.sentences = []
-        self.words_by_length = {}
+        self.words = {}
         for _ in range(num_words):
-            word = f.readline().strip()
-            if len(word) in self.words_by_length:
-                self.words_by_length[len(word)].append(word)
-            else:
-                self.words_by_length[len(word)] = [word]
+            self.words[f.readline().strip()] = True
         self.phrase = f.readline().strip()
 
     def output(self):
@@ -42,51 +38,43 @@ class Preprocessor(object):
 
     def find_sentences(self):
         """
-        method - finds all possible sentences using build_phrase method
-
-        """
-        ind = len(self.phrase) - 1
-        self.build_sentence('', ind, len(self.phrase))
-
-
-    def build_sentence(self, sentence, ind, end_ind):
-        """
-        method - recursively builds sentences with words in self.words_by_length from
-        self.phrase. Appends result to self.sentences
-        :param sentence: sentence to this point
-        :param ind: beginning index to look at self.phrase
-        :param end_ind: end index to look at self.phrase
+        dynamic programming!! populate dat array. populates self.sentences when finished.
         :return: None
         """
-        # make a new copy to manipulate
-        sentence = copy(sentence)
-        if ind < 0:
-            # base case
-            if end_ind == 0:
-                # we've used the whole phrase
-                self.sentences.append(sentence)
-                return
-            else:
-                # we haven't used the whole phrase
-                return
-        # the phrase we're examining - a slice of the full phrase
-        active_phrase = self.phrase[ind:end_ind]
+        # declare array full of Nones, where N = len(phrase)
+        total_length = len(self.phrase)
+        fragments = [[] for _ in range(total_length)]
+        runs = 0
 
-        # can we make a word?
-        if len(active_phrase) in self.words_by_length:
-            if active_phrase in self.words_by_length[len(active_phrase)]:
-                new_phrase = (active_phrase + ' ' + sentence).strip()
-                # "take" recursive call
-                self.build_sentence(new_phrase, ind - 1, ind)
-        # "leave" recursive call
-        self.build_sentence(sentence, ind - 1, end_ind)
+        # don't need to check every column; just the first and those we find entries pointing to
+        start_to_check = [0]
+        for start in start_to_check:
+            for end in range(start, total_length):
+                # slice does [start, end), so we'll add 1 to end
+                word = self.phrase[start:end + 1]
+                if word in self.words:
+                    # found the word -- append to its predecessors
+                    if start > 0:
+                        # if we aren't the first entry
+                        for fragment in fragments[start - 1]:
+                            runs += 1
+                            fragments[end].append(fragment + ' ' + word)
+                    else:
+                        fragments[end] = [word]
+                    if end + 1 not in start_to_check:
+                        # need to make sure we check the words starting right after we end
+                        start_to_check.append(end + 1)
+                        start_to_check.sort()
+        # print(runs)
+        for sentence in fragments[-1]:
+            self.sentences.append(sentence)
 
 
 if __name__ == '__main__':
     filename = ''
     try:
         filename = sys.argv[1]
-    except IndexError:
+    except:
         print("Usage: %s <filename>" % sys.argv[0])
         exit(1)
     main(filename)
