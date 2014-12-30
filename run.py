@@ -44,7 +44,6 @@ class Preprocessor(object):
         # declare array full of Nones, where N = len(phrase)
         total_length = len(self.phrase)
         fragments = [[] for _ in range(total_length)]
-        runs = 0
 
         # don't need to check every column; just the first and those we find entries pointing to
         start_to_check = [0]
@@ -57,15 +56,17 @@ class Preprocessor(object):
                     if start > 0:
                         # if we aren't the first entry
                         for fragment in fragments[start - 1]:
-                            runs += 1
                             fragments[end].append(fragment + ' ' + word)
                     else:
-                        fragments[end] = [word]
+                        fragments[end].append(word)
                     if end + 1 not in start_to_check:
                         # need to make sure we check the words starting right after we end
                         start_to_check.append(end + 1)
                         start_to_check.sort()
-        # print(runs)
+
+            if start > 0 and start != len(self.phrase):
+                # clear all but the last
+                fragments[start-1] = []
         for sentence in fragments[-1]:
             self.sentences.append(sentence)
 
